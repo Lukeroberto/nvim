@@ -1,0 +1,8 @@
+lua require('plugins')
+lua require('lualine').setup({options = {theme = 'gruvbox'}})
+lua require('lspconfig').pyright.setup()
+
+set background=dark
+colorscheme gruvbox
+
+
