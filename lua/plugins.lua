@@ -12,7 +12,7 @@ return require('packer').startup({
 
 		use 'nvim-treesitter/nvim-treesitter'
 
-		use {'nvim-telescope/telescope.nvim', requires = {'nvim-lua/plenary.nvim'}}
+		use 'junegunn/fzf'
 
 		use {'neoclide/coc.nvim', branch = 'release'}
 end})
