@@ -1,8 +1,8 @@
 vim.g.mapleader = " "
 
 -- Fast Buffer Moving
-vim.keymap.set("n", "<C-J>", ":bnext<CR>")
-vim.keymap.set("n", "<C-K>", ":bprev<CR>")
+vim.keymap.set("n", "<C-J>", ":bprev<CR>")
+vim.keymap.set("n", "<C-K>", ":bnext<CR>")
 
 -- Search/Replace
 vim.opt.hlsearch = false
