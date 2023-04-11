@@ -5,7 +5,7 @@ lsp.preset("recommended")
 
 
 
-lsp.on_attach(function(clinet, bufnr) 
+lsp.on_attach(function(client, bufnr) 
     lsp.default_keymaps({buffer = bufnr})
 end)
 
