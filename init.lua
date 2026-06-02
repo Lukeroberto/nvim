@@ -1,67 +1,107 @@
 vim.g.mapleader = " "
+vim.g.maplocalleader = "  "
 
 -- Fast Buffer Moving
 vim.keymap.set("n", "<C-J>", ":bprev<CR>")
 vim.keymap.set("n", "<C-K>", ":bnext<CR>")
 
--- Search/Replace
-vim.opt.hlsearch = false
-vim.opt.incsearch = true
-vim.cmd([[set inccommand=nosplit]])
+-- Terminal Esc
+vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { noremap = true })
 
--- Others
-vim.opt.nu = true
-vim.opt.relativenumber = true
+-- Options
+vim.opt.termguicolors = true
+vim.opt.swapfile = false
+vim.opt.autoindent = true
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
-vim.opt.showmatch = true
-vim.cmd([[set noswapfile]])
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.cursorline = true
+vim.opt.textwidth = 80
 
--- Theme
-vim.o.background = "dark"
-require("gruvbox").setup({
-	transparent_mode = true
+-- filetype detection, plugins, indentation
+vim.cmd.filetype("plugin indent on")
+
+-- color theme
+vim.o.background = 'light'
+vim.cmd.colorscheme 'retrobox'
+--vim.pack.add({"https://github.com/rose-pine/neovim"})
+--vim.cmd("colorscheme rose-pine")
+
+-- plenary + telescope
+vim.pack.add({
+	'https://github.com/nvim-lua/plenary.nvim'
 })
-vim.cmd([[colorscheme gruvbox]])
+vim.pack.add({
+	'https://github.com/nvim-telescope/telescope.nvim'
+})
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
---Package management
-return require('packer').startup(function(use)
-	use {'wbthomason/packer.nvim'}
-	use {'ellisonleao/gruvbox.nvim'}
-	use {
-		'nvim-treesitter/nvim-treesitter',
-		run = ':TSUpdate'
+
+-- treesitter + context
+vim.pack.add({
+	'https://github.com/nvim-treesitter/nvim-treesitter'
+})
+vim.pack.add({
+	'https://github.com/nvim-treesitter/nvim-treesitter-context'
+})
+
+-- LSP Shortcuts
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show line diagnostics' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic list' })
+vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = "Go to Definition" })
+
+
+-- Helper function to organize imports and format
+local function format_python()
+  -- 1. Sort imports via Ruff code action
+  vim.lsp.buf.code_action({
+    context = { only = { "source.organizeImports" } },
+    apply = true,
+  })
+  -- 2. Format the file
+  vim.lsp.buf.format({ async = false })
+end
+
+-- Format manually with <leader>f
+vim.keymap.set('n', '<leader>f', function()
+  format_python()
+end, { desc = 'Format and organize imports' })
+
+-- Format automatically on save
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.py",
+  callback = function()
+    format_python()
+  end,
+})
+
+
+-- LSP Configs
+vim.pack.add{
+  { src = 'https://github.com/neovim/nvim-lspconfig' },
+}
+
+vim.lsp.config('ty', {
+	settings = {
+		ty = {
+			-- ty language server settings go here
+		}
 	}
-	use {'nvim-treesitter/nvim-treesitter-context'}
-	use {'nvim-telescope/telescope.nvim',
-        tag = '0.1.1',
-        requires = {
-            { 'nvim-lua/plenary.nvim' }
-        }
-    }
-    use {
-        'VonHeikemen/lsp-zero.nvim',
-        branch = 'v2.x',
-        requires = {
-            {'neovim/nvim-lspconfig'},
-            {
-                'williamboman/mason.nvim',
-                run = function()
-                    pcall(vim.cmd, 'MasonUpdate')
-                end,
-            },
-            {'williamboman/mason-lspconfig.nvim'},
+})
 
-            -- Autocomplete
-            {'hrsh7th/nvim-cmp'},
-            {'hrsh7th/cmp-nvim-lsp'},
-            {'L3MON4D3/LuaSnip'},
-        }
-    }
+-- Required: Enable the language server
+vim.lsp.enable('ty')
+-- Enable Ruff for python linting/formatting
+vim.lsp.enable('ruff')
 
-	if packer_bootstrap then 
-		require('packer').sync()
-	end
-end)
+-- Lean nvim 
+--vim.pack.add({
+--	'https://github.com/Julian/lean.nvim'
+--})
+--require('lean').setup{ mappings = true}
