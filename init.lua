@@ -1,6 +1,7 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "  "
 
+
 -- Fast Buffer Moving
 vim.keymap.set("n", "<C-J>", ":bprev<CR>")
 vim.keymap.set("n", "<C-K>", ":bnext<CR>")
@@ -42,6 +43,8 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
+-- Center for writing
+vim.pack.add({'https://github.com/shortcuts/no-neck-pain.nvim'})
 
 -- treesitter + context
 vim.pack.add({
@@ -50,6 +53,11 @@ vim.pack.add({
 vim.pack.add({
 	'https://github.com/nvim-treesitter/nvim-treesitter-context'
 })
+
+-- Use tree sitter for folds
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldlevel = 99
 
 -- LSP Shortcuts
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show line diagnostics' })
